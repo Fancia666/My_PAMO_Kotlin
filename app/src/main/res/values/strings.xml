@@ -4,4 +4,20 @@
    <string name="height">Wzrost</string>
    <string name="bmi_button"> Oblicz moje BMI </string>
    <string name="bmi_label">Twoje BMI to:</string>
+   <string name="home">Strona startowa</string>
+   <string name="button1_bmi">Kalkulator BMI</string>
+   <string name="button2_ppm">Kalkulator PPM</string>
+   <string name="button3_recipes">Przepisy</string>
+
+   <string name="ppm_app_name">Kalkulator PPM</string>
+   <string name="label_woman">Kobieta</string>
+   <string name="label_man">Mężczyzna</string>
+
+   <string name="ppm_label">Twoje PPM wynosi:</string>
+   <string name="ppm_button"> Oblicz moje PPM </string>
+   <string name="age">Wiek</string>
+
+   <string name="app_recipes">Ciekawe przepisy</string>
+   <string name="image_description">Image of the current flag in the recipe</string>
+
 </resources>
