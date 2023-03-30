@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/OptionsFragment">
+
+    <fragment
+        android:id="@+id/OptionsFragment"
+        android:name="com.example.tipper.Options"
+        tools:layout="@layout/fragment_options">
+        <action
+            android:id="@+id/action_options_to_calculator_bmi"
+            app:destination="@id/calculatorBMI" />
+        <action
+            android:id="@+id/action_options_to_form_ppm"
+            app:destination="@id/formPPM" />
+        <action
+            android:id="@+id/action_options_to_recipes"
+            app:destination="@id/recipes" />
+    </fragment>
+    <fragment
+        android:id="@+id/calculatorBMI"
+        android:name="com.example.tipper.CalculatorBMI"
+        tools:layout="@layout/fragment_bmi" />
+    <fragment
+        android:id="@+id/formPPM"
+        android:name="com.example.tipper.FormPPM"
+        tools:layout="@layout/fragment_ppm" />
+
+    <fragment
+        android:id="@+id/recipes"
+        android:name="com.example.tipper.Recipes"
+        tools:layout="@layout/fragment_recipes" />
+
+</navigation>
