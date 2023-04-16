@@ -18,6 +18,15 @@
         <action
             android:id="@+id/action_options_to_recipes"
             app:destination="@id/recipes" />
+        <action
+            android:id="@+id/action_options_to_quiz"
+            app:destination="@id/quiz" />
+        <action
+            android:id="@+id/action_options_to_cannon"
+            app:destination="@id/cannon" />
+        <action
+            android:id="@+id/action_cannon_to_options"
+            app:destination="@id/OptionsFragment" />
     </fragment>
     <fragment
         android:id="@+id/calculatorBMI"
@@ -32,5 +41,21 @@
         android:id="@+id/recipes"
         android:name="com.example.tipper.Recipes"
         tools:layout="@layout/fragment_recipes" />
+
+    <fragment
+        android:id="@+id/quiz"
+        android:name="com.example.tipper.quiz.Quiz"
+        tools:layout="@layout/fragment_quiz" />
+
+    <fragment
+        android:id="@+id/cannon"
+        android:name="com.example.tipper.cannon.CannonGame"
+        tools:layout="@layout/fragment_cannon_game" >
+
+        <action
+            android:id="@+id/action_cannon_to_options"
+            app:destination="@id/OptionsFragment" />
+
+    </fragment>
 
 </navigation>

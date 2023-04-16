@@ -50,6 +50,22 @@ public class Options extends Fragment {
                         .navigate(R.id.action_options_to_recipes);
             }
         });
+
+        binding.buttonQuiz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(Options.this)
+                        .navigate(R.id.action_options_to_quiz);
+            }
+        });
+
+        binding.buttonCannon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(Options.this)
+                        .navigate(R.id.action_options_to_cannon);
+            }
+        });
     }
     @Override
     public void onDestroyView() {
