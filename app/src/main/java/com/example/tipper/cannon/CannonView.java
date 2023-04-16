@@ -262,7 +262,7 @@ public class CannonView extends SurfaceView
 
    // aligns the barrel and fires a Cannonball if a Cannonball is not
    // already on the screen
-   public void alignAndFireCannonball(MotionEvent event) {
+   public boolean alignAndFireCannonball(MotionEvent event) {
       // get the location of the touch in this view
       Point touchPoint = new Point((int) event.getX(),
               (int) event.getY());
@@ -276,10 +276,12 @@ public class CannonView extends SurfaceView
       angle = Math.atan2(touchPoint.x, centerMinusY);
 
       // fire Cannonball if there is not already a Cannonball on screen
-      if (cannon.getCannonball() == null) {
+
          cannon.fireCannonball(angle);
          ++shotsFired;
-      }
+
+         return true;
+
    }
 
    // display an AlertDialog when the game ends
@@ -290,8 +292,6 @@ public class CannonView extends SurfaceView
                  public void run() {
                     showSystemBars();
                     dialogIsDisplayed = true;
-//                    gameResult.setCancelable(false); // modal dialog
-//                    gameResult.show(activity.getFragmentManager(), "results");
                     cannonGame.onPause();
                  }
               }
@@ -311,8 +311,7 @@ public class CannonView extends SurfaceView
       cannon.draw(canvas); // draw the cannon
 
       // draw the GameElements
-      if (cannon.getCannonball() != null &&
-              cannon.getCannonball().isOnScreen())
+      if (cannon.getCannonball() != null)
          cannon.getCannonball().draw(canvas);
 
       // draw all of the Targets
@@ -325,8 +324,7 @@ public class CannonView extends SurfaceView
    public void testForCollisions() {
       // remove any of the targets that the Cannonball
       // collides with
-      if (cannon.getCannonball() != null &&
-              cannon.getCannonball().isOnScreen()) {
+      if (cannon.getCannonball() != null) {
          for (int n = 0; n < targets.size(); n++) {
             if (cannon.getCannonball().collidesWith(targets.get(n))) {
                targets.get(n).playSound(); // play Target hit sound
@@ -400,13 +398,11 @@ public class CannonView extends SurfaceView
       int action = e.getAction();
 
       // the user touched the screen or dragged along the screen
-      if (action == MotionEvent.ACTION_DOWN ||
-              action == MotionEvent.ACTION_MOVE) {
+      if (action == MotionEvent.ACTION_DOWN) {
          // fire the cannonball toward the touch point
-         alignAndFireCannonball(e);
+        return alignAndFireCannonball(e);
       }
-
-      return true;
+      return false;
    }
 
    // Thread subclass to control the game loop

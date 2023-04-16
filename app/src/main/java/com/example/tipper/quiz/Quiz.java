@@ -1,5 +1,7 @@
 package com.example.tipper.quiz;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
@@ -12,7 +14,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.ArraySet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
@@ -21,6 +25,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,7 +54,7 @@ public class Quiz extends Fragment {
 
     private static final String TAG = "FlagQuiz Activity";
 
-    private static final int FLAGS_IN_QUIZ = 6;
+    private static final int FLAGS_IN_QUIZ = 2;
 
     private String correctAnswer; // correct country for the current flag
     private int totalGuesses; // number of guesses made
@@ -310,36 +315,7 @@ public class Quiz extends Fragment {
 
                 // if the user has correctly identified FLAGS_IN_QUIZ flags
                 if (correctAnswers == FLAGS_IN_QUIZ) {
-                    // DialogFragment to display quiz stats and start new quiz
-                    DialogFragment quizResults =
-                            new DialogFragment() {
-                                // create an AlertDialog and return it
-                                @Override
-                                public Dialog onCreateDialog(Bundle bundle) {
-                                    AlertDialog.Builder builder =
-                                            new AlertDialog.Builder(getActivity());
-                                    builder.setMessage(
-                                            getString(R.string.results,
-                                                    totalGuesses,
-                                                    (1000 / (double) totalGuesses)));
-
-                                    // "Reset Quiz" Button
-                                    builder.setPositiveButton(R.string.reset_quiz,
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog,
-                                                                    int id) {
-                                                    resetQuiz();
-                                                }
-                                            }
-                                    );
-
-                                    return builder.create(); // return the AlertDialog
-                                }
-                            };
-
-                    // use FragmentManager to display the DialogFragment
-                    quizResults.setCancelable(false);
-                    quizResults.show(getFragmentManager(), "quiz results");
+                    onButtonShowPopupWindowClick();
                 }
                 else { // answer is correct but quiz is not over
                     // load the next flag after a 2-second delay
@@ -363,6 +339,38 @@ public class Quiz extends Fragment {
             }
         }
     };
+
+    public void onButtonShowPopupWindowClick() {
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.activity_popup, null);
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        TextView popupTextView = (TextView) popupView.findViewById(R.id.popupTextView);
+        popupTextView.setText(
+                getString(R.string.results,
+                        totalGuesses,
+                        (1000 / (double) totalGuesses)));
+
+        Button popupButton = (Button) popupView.findViewById(R.id.popupButton);
+        popupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetQuiz();
+                popupWindow.dismiss();
+            }
+        });
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(getView(), Gravity.CENTER, 0, 0);
+
+    }
 
     // utility method that disables all answer Buttons
     private void disableButtons() {

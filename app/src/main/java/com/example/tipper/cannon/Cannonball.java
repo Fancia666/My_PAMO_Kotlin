@@ -3,11 +3,12 @@
 package com.example.tipper.cannon;
 
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 public class Cannonball extends GameElement {
    private float velocityX;
-   private boolean onScreen;
 
    // constructor
    public Cannonball(CannonView view, int color, int soundId, int x,
@@ -15,7 +16,6 @@ public class Cannonball extends GameElement {
       super(view, color, soundId, x, y,
          2 * radius, 2 * radius, velocityY);
       this.velocityX = velocityX;
-      onScreen = true;
    }
 
    // get Cannonball's radius
@@ -26,17 +26,16 @@ public class Cannonball extends GameElement {
    // test whether Cannonball collides with the given GameElement
    public boolean collidesWith(GameElement element) {
       //return (Rect.intersects(shape, element.shape) && velocityX > 0);
-      System.out.println("cjcjjcjc"+shape);
-      System.out.println("cjcjjcjc"+element.matrix);
-      System.out.println("cjcjjcjc"+velocityX);
 
-      return (Rect.intersects(shape, element.shape) && velocityX > 0);
+      RectF rect2 = new RectF();
+      element.matrix.mapRect(rect2);
+
+//      int left, int top, int right, int bottom
+      return (Rect.intersects(shape,
+              new Rect((int)rect2.left, (int)rect2.top,
+                      (int)rect2.right, (int)rect2.bottom)) && velocityX > 0);
    }
 
-   // returns true if this Cannonball is on the screen
-   public boolean isOnScreen() {
-      return onScreen;
-   }
 
    // reverses the Cannonball's horizontal velocity
    public void reverseVelocityX() {
@@ -55,7 +54,7 @@ public class Cannonball extends GameElement {
       if (shape.top < 0 || shape.left < 0 ||
          shape.bottom > view.getScreenHeight() ||
          shape.right > view.getScreenWidth())
-         onScreen = false; // set it to be removed
+      {}
    }
 
    // draws the Cannonball on the given canvas
