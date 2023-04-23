@@ -1,73 +1,57 @@
-package com.example.tipper;
+package com.example.tipper
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import com.example.myapplication.databinding.FragmentBmiBinding;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.myapplication.databinding.FragmentBmiBinding
+import java.text.DecimalFormat
 
-import java.text.DecimalFormat;
-
-public class CalculatorBMI extends Fragment {
-
+class CalculatorBMI : Fragment() {
     // wywołane przy tworzeniu
-    private FragmentBmiBinding binding;
-
-    @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-
-        binding = FragmentBmiBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+    private var binding: FragmentBmiBinding? = null
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentBmiBinding.inflate(inflater, container, false)
+        return binding!!.root
     }
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-        EditText massEditText = binding.editTextMass;
-        EditText heightEditText = binding.editTextHeight;
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val massEditText = binding!!.editTextMass
+        val heightEditText = binding!!.editTextHeight
 
         //guzik do wykonania akcji przeliczenia bmi
-        Button bmiButton = binding.bmiButton;
+        val bmiButton = binding!!.bmiButton
 
         // odnalezienie pola, w które wpisywana będzie przeliczona wartość
-        TextView bmiButtonLabel = binding.bmiCalculatedLabel;
+        val bmiButtonLabel = binding!!.bmiCalculatedLabel
 
         //dodanie akcji dla guzika
-        bmiButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String massText = massEditText.getText().toString();
-                String heightText = heightEditText.getText().toString();
+        bmiButton.setOnClickListener {
+            val massText = massEditText.text.toString()
+            val heightText = heightEditText.text.toString()
+            if (massText.length == 0 || heightText.length == 0) {
+            } else {
+                //przeliczenie funkcji
+                val oo = massText.toFloat() /
+                        (heightText.toFloat() * heightText.toFloat()) * 10000
 
-                if (massText.length() == 0 || heightText.length() == 0) {
+                //obiekt potrzebny do formatowania wyniku
+                val df = DecimalFormat()
+                df.maximumFractionDigits = 2
 
-                } else {
-                    //przeliczenie funkcji
-                    float oo = ((Float.parseFloat(massText)) /
-                            (Float.parseFloat(heightText) * Float.parseFloat(heightText))) * 10000;
-
-                    //obiekt potrzebny do formatowania wyniku
-                    DecimalFormat df = new DecimalFormat();
-                    df.setMaximumFractionDigits(2);
-
-                    //wpisanie wyniku w pole na ekranie
-                    bmiButtonLabel.setText("" + df.format(oo));
-
-                }
+                //wpisanie wyniku w pole na ekranie
+                bmiButtonLabel.text = df.format(oo.toDouble())
             }
-        });
-    }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
 }

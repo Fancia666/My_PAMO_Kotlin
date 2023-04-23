@@ -1,66 +1,53 @@
-package com.example.tipper;
+package com.example.tipper
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import com.example.myapplication.databinding.FragmentRecipesBinding;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-public class Recipes extends Fragment {
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.myapplication.databinding.FragmentRecipesBinding
+import java.io.IOException
 
+class Recipes : Fragment() {
     // wywołane przy tworzeniu
-    private FragmentRecipesBinding binding;
-
-    @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-
-        binding = FragmentRecipesBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+    private var binding: FragmentRecipesBinding? = null
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentRecipesBinding.inflate(inflater, container, false)
+        return binding!!.root
     }
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-        ListView listViewRecipes = binding.listViewRecipes;
-        ArrayList<Recipe> arrayOfRecipes = new ArrayList<Recipe>();
-
-        RecipesAdapter adapter = new RecipesAdapter(getContext(), arrayOfRecipes, getResources());
-        listViewRecipes.setAdapter(adapter);
-
-        List<String> recipesNamesList = new ArrayList<String>();
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val listViewRecipes = binding!!.listViewRecipes
+        val arrayOfRecipes = ArrayList<Recipe>()
+        val adapter = context?.let { RecipesAdapter(it, arrayOfRecipes, resources) }
+        listViewRecipes.adapter = adapter
+        val recipesNamesList: MutableList<String> = ArrayList()
         try {
-            String[] assetsContent = getContext().getAssets().list("");
-            for (String assetsItem : assetsContent) {
-                System.out.println(assetsItem);
-                if(assetsItem.contains(".txt")){
-                    String recipeName = assetsItem.substring(0,assetsItem.indexOf(".txt"));
-                    if(!recipesNamesList.contains(recipeName)){
-                        recipesNamesList.add(recipeName);
+            val assetsContent = requireContext().assets.list("")
+            for (assetsItem in assetsContent!!) {
+                if (assetsItem.contains(".txt")) {
+                    val recipeName = assetsItem.substring(0, assetsItem.indexOf(".txt"))
+                    if (!recipesNamesList.contains(recipeName)) {
+                        recipesNamesList.add(recipeName)
                     }
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (e: IOException) {
+            throw RuntimeException(e)
         }
-
-        for (int i = 0 ; i < recipesNamesList.size(); i++){
-            Recipe newRecipe = new Recipe(recipesNamesList.get(i));
-            adapter.add(newRecipe);
+        for (i in recipesNamesList.indices) {
+            val newRecipe = Recipe(recipesNamesList[i])
+            adapter?.add(newRecipe)
         }
-
-        adapter.notifyDataSetChanged();
-    }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        adapter?.notifyDataSetChanged()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
 }

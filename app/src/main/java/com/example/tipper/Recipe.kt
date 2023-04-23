@@ -1,18 +1,11 @@
-package com.example.tipper;
+package com.example.tipper
 
-public class Recipe {
-    public String recipeName;
-    public String recipeText;
-    String Image;
+class Recipe(@JvmField var recipeName: String) {
+    var recipeText: String
+    var Image: String
 
-    public Recipe(String recipeName){//}, String recipeText, String image) {
-        this.recipeName = recipeName;
-        this.recipeText = recipeName;
-        this.Image = recipeName;
-
-//        this.recipeName = recipeName;
-//        this.recipeText = recipeText;
-//        this.Image = image;
+    init {
+        recipeText = recipeName
+        Image = recipeName
     }
-
 }

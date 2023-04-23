@@ -1,94 +1,73 @@
-package com.example.tipper;
+package com.example.tipper
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import com.example.myapplication.databinding.FragmentPpmBinding;
-import java.text.DecimalFormat;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.myapplication.databinding.FragmentPpmBinding
+import java.text.DecimalFormat
 
-public class FormPPM extends Fragment {
-
+class FormPPM : Fragment() {
     // wywołane przy tworzeniu
-    private FragmentPpmBinding binding;
-
-    @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-
-        binding = FragmentPpmBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+    private var binding: FragmentPpmBinding? = null
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentPpmBinding.inflate(inflater, container, false)
+        return binding!!.root
     }
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-        EditText massEditText = binding.editTextMass;
-        EditText heightEditText = binding.editTextHeight;
-        EditText ageEditText = binding.editTextAge;
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val massEditText = binding!!.editTextMass
+        val heightEditText = binding!!.editTextHeight
+        val ageEditText = binding!!.editTextAge
 
         //guzik do wykonania akcji przeliczenia ppm
-        Button ppmButton = binding.ppmButton;
+        val ppmButton = binding!!.ppmButton
 
         // odnalezienie pola, w które wpisywana będzie przeliczona wartość
-        TextView ppmButtonLabel = binding.ppmCalculatedLabel;
-
-        RadioButton ppmRadioWoman = binding.radioWoman;
-        RadioButton ppmRadioMan = binding.radioMan;
+        val ppmButtonLabel = binding!!.ppmCalculatedLabel
+        val ppmRadioWoman = binding!!.radioWoman
+        val ppmRadioMan = binding!!.radioMan
 
         //dodanie akcji dla guzika
-        ppmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String massText = massEditText.getText().toString();
-                String heightText = heightEditText.getText().toString();
-                String ageText = ageEditText.getText().toString();
+        ppmButton.setOnClickListener {
+            val massText = massEditText.text.toString()
+            val heightText = heightEditText.text.toString()
+            val ageText = ageEditText.text.toString()
+            if (massText.isNotEmpty() && heightText.isNotEmpty() && ageText.isNotEmpty()) {
+                if (ppmRadioWoman.isChecked) {
+                    //dla kobiet:
+                    val output =
+                        (655.0955 + 9.5634 * massText.toFloat() + 1.8496 * heightText.toFloat() - 4.6756 * ageText.toFloat()).toFloat()
 
-                if (massText.length() != 0 &&
-                        heightText.length() != 0 &&
-                        ageText.length() != 0) {
-                    if (ppmRadioWoman.isChecked()) {
-                        //dla kobiet:
-                        float output = new Float(655.0955) +
-                                (new Float(9.5634) * Float.parseFloat(massText)) +
-                                (new Float(1.8496) * Float.parseFloat(heightText)) -
-                                (new Float(4.6756) * Float.parseFloat(ageText));
+                    //obiekt potrzebny do formatowania wyniku
+                    val df = DecimalFormat()
+                    df.maximumFractionDigits = 3
 
-                        //obiekt potrzebny do formatowania wyniku
-                        DecimalFormat df = new DecimalFormat();
-                        df.setMaximumFractionDigits(3);
+                    //wpisanie wyniku w pole na ekranie
+                    ppmButtonLabel.text = df.format(output.toDouble())
+                } else {
+                    //dla mężczyzn:
+                    val output =
+                        (66.4730 + 13.7516 * massText.toFloat() + 5.0033 * heightText.toFloat() - 6.7550 * ageText.toFloat()).toFloat()
 
-                        //wpisanie wyniku w pole na ekranie
-                        ppmButtonLabel.setText("" + df.format(output));
-                    } else {
-                        //dla mężczyzn:
-                        float output = new Float(66.4730) +
-                                (new Float(13.7516) * Float.parseFloat(massText)) +
-                                (new Float(5.0033) * Float.parseFloat(heightText)) -
-                                (new Float(6.7550) * Float.parseFloat(ageText));
+                    //obiekt potrzebny do formatowania wyniku
+                    val df = DecimalFormat()
+                    df.maximumFractionDigits = 3
 
-                        //obiekt potrzebny do formatowania wyniku
-                        DecimalFormat df = new DecimalFormat();
-                        df.setMaximumFractionDigits(3);
-
-                        //wpisanie wyniku w pole na ekranie
-                        ppmButtonLabel.setText("" + df.format(output));
-                    }
+                    //wpisanie wyniku w pole na ekranie
+                    ppmButtonLabel.text = df.format(output.toDouble())
                 }
             }
-        });
-    }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
 }

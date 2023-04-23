@@ -1,79 +1,64 @@
-package com.example.tipper.cannon;
+package com.example.tipper.cannon
+
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+
 // Cannon.java
 // Represents Cannon and fires the Cannonbal
-        import android.graphics.Canvas;
-        import android.graphics.Color;
-        import android.graphics.Paint;
-        import android.graphics.Point;
-
-public class Cannon {
-    private int baseRadius; // Cannon base's radius
-    private Cannonball cannonball; // the Cannon's Cannonball
-    private Paint paint = new Paint(); // Paint used to draw the cannon
-    private CannonView view; // view containing the Cannon
+class Cannon(// view containing the Cannon
+    private val view: CannonView, // Cannon base's radius
+    private val baseRadius: Int, barrelLength: Int,
+    barrelWidth: Int
+) {
+    // returns the Cannonball that this Cannon fired
+    var cannonball // the Cannon's Cannonball
+            : Cannonball? = null
+        private set
+    private val paint = Paint() // Paint used to draw the cannon
 
     // constructor
-    public Cannon(CannonView view, int baseRadius, int barrelLength,
-                  int barrelWidth) {
-        this.view = view;
-        this.baseRadius = baseRadius;
-
-        paint.setStrokeWidth(barrelWidth); // set width of barrel
-        paint.setColor(Color.BLACK); // Cannon's color is Black
+    init {
+        paint.strokeWidth = barrelWidth.toFloat() // set width of barrel
+        paint.color = Color.BLACK // Cannon's color is Black
     }
 
-
     // creates and fires Cannonball in the direction Cannon points
-    public void fireCannonball(double touchPoint) {
+    fun fireCannonball(touchPoint: Double) {
 
         // calculate the Cannonball velocity's x component
-        int velocityX = (int) (CannonView.CANNONBALL_SPEED_PERCENT *
-                view.getScreenWidth() * Math.sin(touchPoint));
+        val velocityX = (CannonView.CANNONBALL_SPEED_PERCENT *
+                view.screenWidth * Math.sin(touchPoint)).toInt()
 
         // calculate the Cannonball velocity's y component
-        int velocityY = (int) (CannonView.CANNONBALL_SPEED_PERCENT *
-                view.getScreenWidth() * -Math.cos(touchPoint));
+        val velocityY = (CannonView.CANNONBALL_SPEED_PERCENT *
+                view.screenWidth * -Math.cos(touchPoint)).toInt()
 
         // calculate the Cannonball's radius
-        int radius = (int) (view.getScreenHeight() *
-                CannonView.CANNONBALL_RADIUS_PERCENT);
+        val radius = (view.screenHeight *
+                CannonView.CANNONBALL_RADIUS_PERCENT).toInt()
 
         // construct Cannonball and position it in the Cannon
-        cannonball = new Cannonball(view, Color.BLACK,
-                CannonView.CANNON_SOUND_ID, -radius,
-                view.getScreenHeight() / 2 - radius, radius, velocityX,
-                velocityY);
-
-        cannonball.playSound(); // play fire Cannonball sound
+        cannonball = Cannonball(
+            view, Color.BLACK,
+            CannonView.CANNON_SOUND_ID, -radius,
+            view.screenHeight / 2 - radius, radius, velocityX.toFloat(),
+            velocityY.toFloat()
+        )
+        cannonball!!.playSound() // play fire Cannonball sound
     }
 
     // draws the Cannon on the Canvas
-    public void draw(Canvas canvas) {
+    fun draw(canvas: Canvas) {
         // draw cannon base
-        canvas.drawCircle(0, (int) view.getScreenHeight() / 2,
-                (int) baseRadius, paint);
-    }
-
-    // returns the Cannonball that this Cannon fired
-    public Cannonball getCannonball() {
-        return cannonball;
+        canvas.drawCircle(
+            0f, (view.screenHeight / 2).toFloat(),
+            baseRadius.toFloat(), paint
+        )
     }
 
     // removes the Cannonball from the game
-    public void removeCannonball() {
-        cannonball = null;
+    fun removeCannonball() {
+        cannonball = null
     }
 }
-
-/*********************************************************************************
- * (C) Copyright 1992-2016 by Deitel & Associates, Inc. and * Pearson Education, *
- * Inc. All Rights Reserved. * * DISCLAIMER: The authors and publisher of this   *
- * book have used their * best efforts in preparing the book. These efforts      *
- * include the * development, research, and testing of the theories and programs *
- * * to determine their effectiveness. The authors and publisher make * no       *
- * warranty of any kind, expressed or implied, with regard to these * programs   *
- * or to the documentation contained in these books. The authors * and publisher *
- * shall not be liable in any event for incidental or * consequential damages in *
- * connection with, or arising out of, the * furnishing, performance, or use of  *
- * these programs.                                                               *
- *********************************************************************************/

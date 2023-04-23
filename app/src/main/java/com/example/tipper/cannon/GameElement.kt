@@ -1,106 +1,75 @@
 // GameElement.java
 // Represents a rectangle-bounded game element
-package com.example.tipper.cannon;
+package com.example.tipper.cannon
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Picture;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PictureDrawable;
-import android.media.Image;
+import android.graphics.*
 
-import java.io.IOException;
-import java.io.InputStream;
+open class GameElement(// the view that contains this GameElement
+    protected var view: CannonView?, color: Int, soundId: Int, x: Int,
+    y: Int, width: Int, length: Int, velocityY: Float
+) {
+    protected var paint = Paint() // Paint to draw this GameElement
+    protected var shape // the GameElement's rectangular bounds
+            : Rect
+    var matrix: Matrix
+    private var velocityYimg: Float
+    private var bitmap: Bitmap? = null
+    protected var imgX: Int
+    protected var imgY: Int
+    private var velocityY // the vertical velocity of this GameElement
+            : Float
+    private val soundId // the sound associated with this GameElement
+            : Int
 
-public class   GameElement {
-   protected CannonView view; // the view that contains this GameElement
-   protected Paint paint = new Paint(); // Paint to draw this GameElement
-   protected Rect shape; // the GameElement's rectangular bounds
+    constructor(
+        view: CannonView, color: Int, soundId: Int, x: Int,
+        y: Int, width: Int, length: Int, velocityY: Float, bitmap: Bitmap?
+    ) : this(view, color, soundId, x, y, width, length, velocityY) {
+        this.bitmap = bitmap
+    }
 
-   protected Matrix matrix;
+    // public constructor
+    init {
+        paint.color = color
+        shape = Rect(x, y, x + width, y + length) // set bounds
+        imgX = x
+        imgY = y
+        matrix = Matrix()
+        matrix.setScale(0.1f, 0.1f)
+        matrix.setTranslate(imgX.toFloat(), y.toFloat())
+        this.soundId = soundId
+        this.velocityY = velocityY
+        velocityYimg = velocityY
+    }
 
-   private float velocityYimg;
+    // update GameElement position and check for wall collisions
+    open fun update(interval: Double) {
+        val `var` = (velocityYimg * interval).toFloat()
+        if (imgY < 0 && velocityYimg < 0 ||
+            imgY + 150 > view!!.screenHeight && velocityYimg > 0
+        ) {
+            velocityYimg *= -1f
+        }
+        imgY += `var`.toInt()
+        matrix.setTranslate(imgX.toFloat(), imgY.toFloat())
 
-   private Bitmap bitmap = null;
-   protected int imgX;
+        // update vertical position
+        shape.offset(0, (velocityY * interval).toInt())
 
-   protected int imgY;
-   private float velocityY; // the vertical velocity of this GameElement
-   private int soundId; // the sound associated with this GameElement
+        // if this GameElement collides with the wall, reverse direction
+        if (shape.top < 0 && velocityY < 0 ||
+            shape.bottom > view!!.screenHeight && velocityY > 0
+        ) velocityY *= -1f // reverse this GameElement's velocity
+    }
 
-   public GameElement(CannonView view, int color, int soundId, int x,
-                      int y, int width, int length, float velocityY, Bitmap bitmap) {
+    // draws this GameElement on the given Canvas
+    open fun draw(canvas: Canvas) {
+        bitmap = Bitmap.createScaledBitmap(bitmap!!, 150, 150, false)
+        canvas.drawBitmap(Bitmap.createScaledBitmap(bitmap!!, 150, 150, false), matrix, paint)
+    }
 
-      this(view, color, soundId, x, y, width, length, velocityY);
-      this.bitmap = bitmap;
-   }
-
-   // public constructor
-   public GameElement(CannonView view, int color, int soundId, int x,
-      int y, int width, int length, float velocityY) {
-      this.view = view;
-      paint.setColor(color);
-      shape = new Rect(x, y, x + width, y + length); // set bounds
-
-      imgX = x;
-      imgY = y;
-
-      matrix = new Matrix();
-      matrix.setScale(0.1f, 0.1f);
-      matrix.setTranslate(imgX, y);
-
-      this.soundId = soundId;
-      this.velocityY = velocityY;
-      this.velocityYimg = velocityY;
-   }
-
-   // update GameElement position and check for wall collisions
-   public void update(double interval) {
-      float var = (float) (velocityYimg * interval);
-
-      if(imgY < 0 && velocityYimg < 0  ||
-              imgY + 150 > view.getScreenHeight() && velocityYimg > 0){
-         velocityYimg *= -1;
-      }
-
-      imgY += var;
-      matrix.setTranslate((float) imgX, imgY);
-
-      // update vertical position
-      shape.offset(0, (int) (velocityY * interval));
-
-      // if this GameElement collides with the wall, reverse direction
-      if (shape.top < 0 && velocityY < 0 ||
-         shape.bottom > view.getScreenHeight() && velocityY > 0)
-         velocityY *= -1; // reverse this GameElement's velocity
-   }
-
-   // draws this GameElement on the given Canvas
-   public void draw(Canvas canvas) {
-      bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
-      canvas.drawBitmap(bitmap, matrix, paint);
-
-   }
-
-   // plays the sound that corresponds to this type of GameElement
-   public void playSound() {
-      view.playSound(soundId);
-   }
+    // plays the sound that corresponds to this type of GameElement
+    fun playSound() {
+        view!!.playSound(soundId)
+    }
 }
-
-/*********************************************************************************
- * (C) Copyright 1992-2016 by Deitel & Associates, Inc. and * Pearson Education, *
- * Inc. All Rights Reserved. * * DISCLAIMER: The authors and publisher of this   *
- * book have used their * best efforts in preparing the book. These efforts      *
- * include the * development, research, and testing of the theories and programs *
- * * to determine their effectiveness. The authors and publisher make * no       *
- * warranty of any kind, expressed or implied, with regard to these * programs   *
- * or to the documentation contained in these books. The authors * and publisher *
- * shall not be liable in any event for incidental or * consequential damages in *
- * connection with, or arising out of, the * furnishing, performance, or use of  *
- * these programs.                                                               *
- *********************************************************************************/
